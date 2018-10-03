@@ -24,6 +24,20 @@
 		  "128": "images/get_started128.png"
 	  }
 	},
+	"commands": {
+    "add" : {
+			"suggested_key": {
+				"default": "Ctrl+C" 
+			},
+			"description": "Add value"
+		},
+		"minus" : {
+			"suggested_key": {
+				"default": "Ctrl+V" 
+			},
+			"description": "Minus value"
+		}
+	},
 	"options_page": "options.html",
 	"externally_connectable": {
 	  "matches": [

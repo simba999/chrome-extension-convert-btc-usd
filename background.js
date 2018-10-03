@@ -70,3 +70,67 @@ function messageReceived(msg) {
    // Do your work here
    console.log('Background receive: ', msg);
 }
+
+/*
+    add value by short key
+*/
+// The onClicked callback function.
+function addBTCValueFromKey(value, type) {
+  // if (info.menuItemId == "contextselection") {
+  console.log("key info: " + value);
+
+  //for sending a message
+  chrome.extension.onConnect.addListener(function(port) {
+    
+    console.log("Connected .....");
+    // check selection text can be converted into digit
+    if (parseFloat(value)) {
+      
+      port.onMessage.addListener(function(msg) {
+        console.log("message recieved " + msg);
+        const requestParams = { type: type, value: value };
+
+        port.postMessage(JSON.stringify(requestParams));
+      });
+
+    }
+
+  });
+  // }
+};
+
+var funcToInject = function() {
+  var selection = window.getSelection();
+  return (selection.rangeCount > 0) ? selection.toString() : '';
+};
+
+/* This line converts the above function to string
+* (and makes sure it will be called instantly) */
+var jsCodeStr = ';(' + funcToInject + ')();';
+
+// key hook to plus and minus value
+chrome.commands.onCommand.addListener(function (command) {
+  const value = window.getSelection().toString();
+  
+    chrome.tabs.executeScript({
+      code: jsCodeStr,
+      allFrames: true   //  <-- inject into all frames, as the selection 
+                        //      might be in an iframe, not the main page
+  }, function(selectedTextPerFrame) {
+      if (chrome.runtime.lastError) {
+          /* Report any error */
+          alert('ERROR:\n' + chrome.runtime.lastError.message);
+      } else if ((selectedTextPerFrame.length > 0)
+              && (typeof(selectedTextPerFrame[0]) === 'string')) {
+          
+                /* The results are as expected */
+                if (command === "add") {
+                  addBTCValueFromKey(selectedTextPerFrame[0], 'add');
+                } else if (command === "minus") {
+                  addBTCValueFromKey(value, 'minus');
+                }
+      }
+  });
+
+    
+});

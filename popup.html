@@ -5,7 +5,7 @@
     <style>
 
       .calculation-container {
-        height: 50px;
+        height: 350px;
         width: 250px;
       }
 
@@ -22,11 +22,17 @@
     <!-- body -->
     <div class="calculation-container">
       <div id="btcValues"></div>
-      <div id="totalValue">0</div>
+      <div class="result">
+        <label>Total BTC: </label>
+        <div id="totalValue">0</div>
+        <label>Total USD: </label>
+        <div id="totalUSDValue">0</div>
+      </div>
+      
     </div>
     
     
-    <button id="calSum">Total</button>
+    <button id="convert">Total</button>
 
     
     <!-- scripts -->
