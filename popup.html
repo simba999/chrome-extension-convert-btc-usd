@@ -16,6 +16,23 @@
       #btcValues {
         border: 1px solid black;
       }
+
+      .result {
+        padding: 15px;
+      }
+
+      #totalValue {
+        margin-bottom: 25px;
+        margin-left: 15px;
+      }
+
+      #totalUSDValue {
+        margin-left: 15px;
+      }
+
+      .flex-box {
+        display: flex;
+      }
     </style>
   </head>
   <body>
@@ -23,10 +40,16 @@
     <div class="calculation-container">
       <div id="btcValues"></div>
       <div class="result">
-        <label>Total BTC: </label>
-        <div id="totalValue">0</div>
-        <label>Total USD: </label>
-        <div id="totalUSDValue">0</div>
+        <div class="flex-box">
+          <label>Total BTC: </label>
+          <div id="totalValue">0</div>
+        </div>
+        
+        <div class="flex-box">
+          <label>Total USD: </label>
+          <div id="totalUSDValue">0</div>
+        </div>
+        
       </div>
       
     </div>
