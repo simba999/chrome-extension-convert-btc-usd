@@ -17,7 +17,23 @@ function addValuesToDom(data) {
 		totalPrice -= parseFloat(_data.value);
 	}
 
-	document.getElementById('totalValue').innerText = totalPrice;
+	document.getElementById('totalValue').innerText = 'USD ' + totalPrice;
+	
+	// convert usd to btc
+	var usdValueElement = document.getElementById('totalUSDValue');
+	var price = totalPrice || 0;
+
+	const fetchOptions = {
+		method: 'get'
+	}
+
+	fetch(`https://tranquil-sierra-98398.herokuapp.com/getBTC/${totalPrice}`, fetchOptions)
+		.then(function(res) {
+			// usdValueElement.innerText = res;
+			res.json().then((text) => {
+				usdValueElement.innerText = text.value;
+			})
+		})
 }
 
 var port = chrome.extension.connect({
