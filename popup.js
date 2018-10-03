@@ -32,23 +32,19 @@ port.onMessage.addListener(function(msg) {
 var convertElement = document.getElementById("convert");
 
 convertElement.onclick = function(element) {
+	var totalValueElement = document.getElementById('totalValue');
+	var usdValueElement = document.getElementById('totalUSDValue');
+	var price = totalValueElement.innerText || 0;
+
 	const fetchOptions = {
-		method: 'get',
-		mode: 'no-cors',
-		headers: {
-			'Access-Control-Allow-Credentials' : true,
-			'Access-Control-Allow-Origin':'*',
-			'Access-Control-Allow-Methods':'GET',
-			'Access-Control-Allow-Headers':'application/json'
-		}
+		method: 'get'
 	}
 
-	fetch('https://www.google.ca/search?q=1.57+btc+to+usd&oq=1.23+btc+to++usd&sourceid=chrome&ie=UTF-8', fetchOptions)
+	fetch(`https://tranquil-sierra-98398.herokuapp.com/getBTC/1.5`, fetchOptions)
 		.then(function(res) {
-			res.text().then((text) => {
-				var usdValueElement = document.getElementById('totalUSDValue');
-				port.postMessage(text.split('knowledge-currency__tgt-amount">')[1].split('</span>')[0]);
-				usdValueElement.innerText = text.split('knowledge-currency__tgt-amount">')[1].split('</span>')[0];
+			// usdValueElement.innerText = res;
+			res.json().then((text) => {
+				usdValueElement.innerText = text.value;
 			})
 		})
 }

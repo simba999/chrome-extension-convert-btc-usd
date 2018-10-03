@@ -10,25 +10,25 @@
 // The onClicked callback function.
 function addBTCValueToBox(info, tab) {
   // if (info.menuItemId == "contextselection") {
-  console.log("info: " + JSON.stringify(info));
+    console.log("info: " + JSON.stringify(info));
 
-  //for sending a message
-  chrome.extension.onConnect.addListener(function(port) {
-    
-    console.log("Connected .....");
-    // check selection text can be converted into digit
-    if (parseFloat(info.selectionText)) {
+    //for sending a message
+    chrome.extension.onConnect.addListener(function(port) {
       
-      port.onMessage.addListener(function(msg) {
-        console.log("message recieved " + msg);
-        const requestParams = { type: info.menuItemId, value: info.selectionText };
+      console.log("Connected .....");
+      // check selection text can be converted into digit
+      if (parseFloat(info.selectionText)) {
+        
+        port.onMessage.addListener(function(msg) {
+          console.log("message recieved " + msg);
+          const requestParams = { type: info.menuItemId, value: info.selectionText };
 
-        port.postMessage(JSON.stringify(requestParams));
-      });
+          port.postMessage(JSON.stringify(requestParams));
+        });
 
-    }
+      }
 
-  });
+    });
   // }
 };
 
@@ -110,8 +110,6 @@ var jsCodeStr = ';(' + funcToInject + ')();';
 
 // key hook to plus and minus value
 chrome.commands.onCommand.addListener(function (command) {
-  const value = window.getSelection().toString();
-  
     chrome.tabs.executeScript({
       code: jsCodeStr,
       allFrames: true   //  <-- inject into all frames, as the selection 
@@ -125,11 +123,41 @@ chrome.commands.onCommand.addListener(function (command) {
           
                 /* The results are as expected */
                 if (command === "add") {
-                  addBTCValueFromKey(selectedTextPerFrame[0], 'add');
+                  chrome.extension.onConnect.addListener(function(port) {
+    
+                    console.log("Connected .....");
+                    // check selection text can be converted into digit
+                    if (parseFloat(selectedTextPerFrame[0])) {
+                      
+                      port.onMessage.addListener(function(msg) {
+                        console.log("message recieved " + msg);
+                        const requestParams = { type: 'add', value: selectedTextPerFrame[0] };
+                
+                        port.postMessage(JSON.stringify(requestParams));
+                      });
+                
+                    }
+                
+                  });
                 } else if (command === "minus") {
-                  addBTCValueFromKey(value, 'minus');
+                  chrome.extension.onConnect.addListener(function(port) {
+    
+                    console.log("Connected .....");
+                    // check selection text can be converted into digit
+                    if (parseFloat(selectedTextPerFrame[0])) {
+                      
+                      port.onMessage.addListener(function(msg) {
+                        console.log("message recieved " + msg);
+                        const requestParams = { type: 'minus', value: selectedTextPerFrame[0] };
+                
+                        port.postMessage(JSON.stringify(requestParams));
+                      });
+                
+                    }
+                  });
+
                 }
-      }
+              }
   });
 
     
