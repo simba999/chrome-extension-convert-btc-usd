@@ -1,16 +1,29 @@
-let changeColor = document.getElementById('changeColor');
+// Create DOM elements for adding BTC values to popup
+function addValuesToDom(data) {
+	const _data = JSON.parse(data);
+	const btcDomElements = document.getElementById('btcValues');
 
-chrome.storage.sync.get('color', function(data) {
-	changeColor.style.backgroundColor = data.color;
-	changeColor.setAttribute('value', data.color);
-});
+	let element = document.createElement('input');
+	element.value = _data.value;
+	element.className="value-item"
 
-changeColor.onclick = function(element) {
-	let color = element.target.value;
+	btcDomElements.appendChild(element);
+
+	var totalPrice = parseFloat(document.getElementById('totalValue').innerText) || 0;
 	
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-	  chrome.tabs.executeScript(
-	      tabs[0].id,
-	      {code: 'document.body.style.backgroundColor = "' + color + '";'});
-	});
-};
+	if (_data.type === 'add') {
+		totalPrice += parseFloat(_data.value);
+	} else {
+		totalPrice -= parseFloat(_data.value);
+	}
+
+	document.getElementById('totalValue').innerText = totalPrice;
+}
+
+var port = chrome.extension.connect({
+    name: "Sample Communication"
+});
+port.postMessage("Hi BackGround");
+port.onMessage.addListener(function(msg) {
+    addValuesToDom(msg)
+});

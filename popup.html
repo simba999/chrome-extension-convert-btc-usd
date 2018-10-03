@@ -3,27 +3,31 @@
   <head>
     <!-- Style Sheets -->
     <style>
-      button {
+
+      .calculation-container {
         height: 50px;
         width: 250px;
-        outline: none;
+      }
+
+      .calculation-container input {
+        width: 100%;
+      }
+
+      #btcValues {
+        border: 1px solid black;
       }
     </style>
   </head>
   <body>
     <!-- body -->
-    <p id="para">
-      Ut scelerisque posuere sem, non aliquam ipsum sodales et. 
-      Fusce luctus, mauris ut volutpat varius, 
-      leo dui posuere ligula, vitae rhoncus leo ipsum eu neque.
-    </p>
+    <div class="calculation-container">
+      <div id="btcValues"></div>
+      <div id="totalValue">0</div>
+    </div>
     
-    <button id="copyButton">Set System Clipboard To The Following:</button>
+    
+    <button id="calSum">Total</button>
 
-    <h4>Current Clipboard Text:</h4>
-
-    <p id="output"></p>
-    <button id="changeColor"></button>
     
     <!-- scripts -->
     <script src="popup.js"></script>

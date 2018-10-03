@@ -8,6 +8,7 @@
 		"storage",
 		"clipboardRead",
 		"clipboardWrite",
+		"contextMenus",
 		"http://localhost/"
 	],
 	"background": {

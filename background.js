@@ -8,37 +8,37 @@
     add menu item on content page
 */
 // The onClicked callback function.
-function onClickHandler(info, tab) {
-  if (info.menuItemId == "radio1" || info.menuItemId == "radio2") {
-    console.log("radio item " + info.menuItemId +
-                " was clicked (previous checked state was "  +
-                info.wasChecked + ")");
-  } else if (info.menuItemId == "checkbox1" || info.menuItemId == "checkbox2") {
-    console.log(JSON.stringify(info));
-    console.log("checkbox item " + info.menuItemId +
-                " was clicked, state is now: " + info.checked +
-                " (previous state was " + info.wasChecked + ")");
+function addBTCValueToBox(info, tab) {
+  // if (info.menuItemId == "contextselection") {
+  console.log("info: " + JSON.stringify(info));
 
-  } else {
-    console.log("item " + info.menuItemId + " was clicked");
-    console.log("info: " + JSON.stringify(info));
-    console.log("tab: " + JSON.stringify(tab));
-  }
+  //for sending a message
+  chrome.extension.onConnect.addListener(function(port) {
+    
+    console.log("Connected .....");
+    // check selection text can be converted into digit
+    if (parseFloat(info.selectionText)) {
+      
+      port.onMessage.addListener(function(msg) {
+        console.log("message recieved " + msg);
+        const requestParams = { type: info.menuItemId, value: info.selectionText };
+
+        port.postMessage(JSON.stringify(requestParams));
+      });
+
+    }
+
+  });
+  // }
 };
 
 // add event when right-clicking item
-chrome.contextMenus.onClicked.addListener(onClickHandler);
-
+chrome.contextMenus.onClicked.addListener(addBTCValueToBox);
 
 /*
   initialize the app
 */
 chrome.runtime.onInstalled.addListener(function() {
-  // change color of html body for testing
-  chrome.storage.sync.set({color: '#3aa757'}, function() {
-    console.log("The color is green.");
-  });
-
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
     chrome.declarativeContent.onPageChanged.addRules([{
       conditions: [new chrome.declarativeContent.PageStateMatcher({
@@ -49,46 +49,24 @@ chrome.runtime.onInstalled.addListener(function() {
     }]);
   });
 
-    // Create one test item for each context type.
-    var contexts = ["page","selection","link","editable","image","video",
-                    "audio"];
-    for (var i = 0; i < contexts.length; i++) {
-      var context = contexts[i];
-      var title = "Test '" + context + "' menu item";
-      var id = chrome.contextMenus.create({"title": title, "contexts":[context],
-                                          "id": "context" + context});
-      console.log("'" + context + "' item:" + id);
-    }
+  // Create one test item for each context type.
+  var contexts = ["selection"];
+  for (var i = 0; i < contexts.length; i++) {
+    var context = contexts[i];
+    var addTitle = "Add value to box";
+    var removeTitle = "Remove value to box";
 
-    // Create a parent item and two children.
-    chrome.contextMenus.create({"title": "Test parent item", "id": "parent"});
-    chrome.contextMenus.create(
-        {"title": "Child 1", "parentId": "parent", "id": "child1"});
-    chrome.contextMenus.create(
-        {"title": "Child 2", "parentId": "parent", "id": "child2"});
-    console.log("parent child1 child2");
-
-    // Create some radio items.
-    chrome.contextMenus.create({"title": "Radio 1", "type": "radio",
-                                "id": "radio1"});
-    chrome.contextMenus.create({"title": "Radio 2", "type": "radio",
-                                "id": "radio2"});
-    console.log("radio1 radio2");
-
-    // Create some checkbox items.
-    chrome.contextMenus.create(
-        {"title": "Checkbox1", "type": "checkbox", "id": "checkbox1"});
-    chrome.contextMenus.create(
-        {"title": "Checkbox2", "type": "checkbox", "id": "checkbox2"});
-    console.log("checkbox1 checkbox2");
-
-    // Intentionally create an invalid item, to show off error checking in the
-    // create callback.
-    console.log("About to try creating an invalid item - an error about " +
-        "duplicate item child1 should show up");
-    chrome.contextMenus.create({"title": "Oops", "id": "child1"}, function() {
-      if (chrome.extension.lastError) {
-        console.log("Got expected error: " + chrome.extension.lastError.message);
-      }
-    });
+    var addMenu = chrome.contextMenus.create({"title": addTitle, "contexts":[context],
+                                        "id": "add"});
+    var removeMenu = chrome.contextMenus.create({"title": removeTitle, "contexts":[context],
+                                        "id": "remove"});
+  }
 });
+
+//for listening any message which comes from runtime
+chrome.runtime.onMessage.addListener(messageReceived);
+
+function messageReceived(msg) {
+   // Do your work here
+   console.log('Background receive: ', msg);
+}
