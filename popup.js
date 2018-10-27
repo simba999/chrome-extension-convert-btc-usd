@@ -1,21 +1,21 @@
+var totalPrice = parseFloat(document.getElementById('totalValue').innerText) || 0;
 // Create DOM elements for adding BTC values to popup
 function addValuesToDom(data) {
 	const _data = JSON.parse(data);
 	const btcDomElements = document.getElementById('btcValues');
-
 	let element = document.createElement('input');
-	element.value = _data.value;
 	element.className="value-item"
+
+	if (_data.type === 'add') {
+		totalPrice += parseFloat(_data.value);
+		element.value = _data.value;
+	} else {
+		totalPrice -= parseFloat(_data.value);
+		element.value = '-' + _data.value;
+	}
 
 	btcDomElements.appendChild(element);
 
-	var totalPrice = parseFloat(document.getElementById('totalValue').innerText) || 0;
-	
-	if (_data.type === 'add') {
-		totalPrice += parseFloat(_data.value);
-	} else {
-		totalPrice -= parseFloat(_data.value);
-	}
 
 	document.getElementById('totalValue').innerText = 'USD ' + totalPrice;
 	
@@ -27,13 +27,13 @@ function addValuesToDom(data) {
 		method: 'get'
 	}
 
-	fetch(`https://tranquil-sierra-98398.herokuapp.com/getBTC/${totalPrice}`, fetchOptions)
-		.then(function(res) {
-			// usdValueElement.innerText = res;
-			res.json().then((text) => {
-				usdValueElement.innerText = text.value;
-			})
-		})
+	// fetch(`https://tranquil-sierra-98398.herokuapp.com/getBTC/${totalPrice}`, fetchOptions)
+	// 	.then(function(res) {
+	// 		// usdValueElement.innerText = res;
+	// 		res.json().then((text) => {
+	// 			usdValueElement.innerText = text.value;
+	// 		})
+	// 	})
 }
 
 var port = chrome.extension.connect({
